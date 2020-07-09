@@ -1,9 +1,7 @@
 from  pyperclip import copy, paste, waitForNewPaste
-import keyboard, multiprocessing
+import keyboard, multiprocessing, json
 
-switch_key = "right alt"
-
-def duplicate_clipboard():
+def duplicate_clipboard(switch_key, clear):
     while True:
         old = waitForNewPaste()
         new = waitForNewPaste()
@@ -14,23 +12,31 @@ def duplicate_clipboard():
         copy(new)
         print("Clipboard switched!")
 
-        old = ""
-        new = ""
-        
-        keyboard.wait(switch_key)
-        copy("")
-        print("Clipboard cleared!")
+        if clear == True:
+            old = ""
+            new = ""
+            
+            keyboard.wait(switch_key)
+            copy("")
+            print("Clipboard cleared!")
 
 def check_end():
     keyboard.wait("esc")
     copy("")
 
 if __name__ == "__main__":
-    p1 = multiprocessing.Process(target=duplicate_clipboard)
-    p2 = multiprocessing.Process(target=check_end)
-
+    with open("settings.json") as r:
+        settings = json.load(r)
+    switch_key = settings["key"]
+    clear = settings["clear"]
+    assert type(clear) == bool, "'clear' from settings.json is not boolean"
+    assert type(switch_key) == str, "'key' from settings.json is not string"
+    
+    p1 = multiprocessing.Process(target=duplicate_clipboard, args=(switch_key, clear))
     p1.start()
+    p2 = multiprocessing.Process(target=check_end)
     p2.start()
 
     p2.join()
-    raise Exception("Program killed. Clipboard cleared")
+    p1.close()
+    raise KeyboardInterrupt("Program killed. Clipboard cleared")
