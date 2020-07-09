@@ -1,6 +1,7 @@
 # Double clipboard
 [![MIT license](https://img.shields.io/github/license/appuchias/double_clipboard?style=flat-square)](https://github.com/appuchias/double_clipboard/blob/master/LICENSE)
 [![Author](https://img.shields.io/badge/Project%20by-Appu-9cf?style=flat-square)](https://github.com/appuchias)
+![Size](https://img.shields.io/github/repo-size/appuchias/double_clipboard?style=flat-square)
 
 # How it works
 
