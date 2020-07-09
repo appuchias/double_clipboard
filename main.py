@@ -1,19 +1,36 @@
-import pyperclip
-import keyboard
-from time import sleep
+from  pyperclip import copy, paste, waitForNewPaste
+import keyboard, multiprocessing
 
-old_clipboard = ""
-new_clipboard = ""
+switch_key = "right alt"
 
-while True:
-    pyperclip.waitFornewPaste()
-    
-    if keyboard.read_key() == "esc":
-        break
-    
-    old_clipboard = new_clipboard
-    new_clipboard = pyperclip.paste()
-    
-    pyperclip.copy(old_clipboard)
-    sleep(5)
-    pyperclip.copy(new_clipboard)
+def duplicate_clipboard():
+    while True:
+        old = waitForNewPaste()
+        new = waitForNewPaste()
+        
+        copy(old)
+
+        keyboard.wait(switch_key)
+        copy(new)
+        print("Clipboard switched!")
+
+        old = ""
+        new = ""
+        
+        keyboard.wait(switch_key)
+        copy("")
+        print("Clipboard cleared!")
+
+def check_end():
+    keyboard.wait("esc")
+    copy("")
+
+if __name__ == "__main__":
+    p1 = multiprocessing.Process(target=duplicate_clipboard)
+    p2 = multiprocessing.Process(target=check_end)
+
+    p1.start()
+    p2.start()
+
+    p2.join()
+    raise Exception("Program killed. Clipboard cleared")
